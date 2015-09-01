@@ -1,5 +1,5 @@
 import sympy as sym
-V, t, I, w, dt = sym.symbols('V t I w dt')  # global symbols
+V, t, I, w, dt, b = sym.symbols('V t I w dt b')  # global symbols 
 f = None  # global variable for the source term in the ODE
 
 def ode_source_term(u):
@@ -16,8 +16,9 @@ def residual_discrete_eq(u):
 def residual_discrete_eq_step1(u):
     """Return the residual of the discrete eq. at the first
     step with u inserted."""
-    F = 0.5*(2*dt*V + 2*I - I*dt**2*w**2 + w**2*(V*dt+I)*dt**2)
-    R = F - ode_source_term(u)
+    f_0 =  w**2*I
+    exact = (ode_source_term(u).subs(t,dt) - sym.diff(u(t),t,t).subs(t,dt))/w**2
+    R = exact - 0.5*(dt**2*f_0 - dt**2*w**2*I + 2*I + 2*dt*V)
     return sym.simplify(R)
 
 def DtDt(u, dt): 
@@ -47,6 +48,10 @@ def main(u):
 
 def linear():
     main(lambda t: V*t + I)
+def quadratic():
+    main(lambda t : b*t**2+V*t+I)
 
 if __name__ == '__main__':
     linear()
+    quadratic()
+
