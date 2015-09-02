@@ -1,5 +1,4 @@
 import sympy as sym
-from numpy import *
 V, t, I, w, dt, b,c = sym.symbols('V t I w dt b c')  # global symbols 
 f = None  # global variable for the source term in the ODE
 
@@ -55,27 +54,40 @@ def quadratic():
 def poly():
     main(lambda t : c*t**3 + b*t**2+V*t+I)
 
-def solver(I,V,dt):
-    n = 100
-    u = zeros()
-    f_first = -w**2*I + DtDt(u,dt).subs(t,0)
-    u[1] = 0.5*(2*dt*V + dt**2*f_first - dt**2*w**2*I + 2*I)
-    u[0] = u[1]-2*dt*I
-    for i in range(2,n-1):
-        u[n+1] = dt**2*f - w**2*dt**2*u[n] + 2*u[n-1]
+from numpy import *
+from matplotlib.pyplot import *
+def solver(I1,w,stopp,deltat):
+    I1 = float(I1)
+    n = int(round(stopp/deltat))
+    u = zeros(n+1)
+    tim = linspace(0,5,n+1)
+    u[0] = I1
+    u[1] = u[0]+deltat
+    for i in range(1,len(u)-1):
+        #f_last = w**2*u[i]*deltat**2
+        f_last = 0
+        u[i+1] = deltat**2*f_last - w**2*deltat**2*u[i] + 2*u[i] - u[i-1]
+    return tim, u  
 
-
-
-
-
+def test (I1,w,stopp,deltat,V1):
+    tim, u = solver(I1,w,stopp,deltat)   
+    figure(1)
+    title("myplot")
+    plot (tim,u,"*")
+    plot(tim, I1*cos(w*tim)+(V1/w)*sin(w*tim))
+    show()
 
 
 
     
 if __name__ == '__main__':
-    print "linear"
-    linear()
-    print "quadratic"
-    quadratic()
-    print "poly"
-    poly()
+    """  linear()
+          quadratic()"""
+    test(1,1,5,0.1,1)
+    """
+                print "linear"
+                linear()
+                print "quadratic"
+                quadratic()
+                print "poly"
+                poly() """
