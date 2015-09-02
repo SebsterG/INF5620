@@ -1,5 +1,6 @@
 import sympy as sym
-V, t, I, w, dt, b = sym.symbols('V t I w dt b')  # global symbols 
+from numpy import *
+V, t, I, w, dt, b,c = sym.symbols('V t I w dt b c')  # global symbols 
 f = None  # global variable for the source term in the ODE
 
 def ode_source_term(u):
@@ -16,9 +17,9 @@ def residual_discrete_eq(u):
 def residual_discrete_eq_step1(u):
     """Return the residual of the discrete eq. at the first
     step with u inserted."""
-    f_0 =  w**2*I
+    f_0 =  w**2*I + DtDt(u,dt).subs(t,0)
     exact = (ode_source_term(u).subs(t,dt) - sym.diff(u(t),t,t).subs(t,dt))/w**2
-    R = exact - 0.5*(dt**2*f_0 - dt**2*w**2*I + 2*I + 2*dt*V)
+    R = exact - 0.5*(2*dt*V + dt**2*f_0 - dt**2*w**2*I + 2*I)
     return sym.simplify(R)
 
 def DtDt(u, dt): 
@@ -51,7 +52,30 @@ def linear():
 def quadratic():
     main(lambda t : b*t**2+V*t+I)
 
-if __name__ == '__main__':
-    linear()
-    quadratic()
+def poly():
+    main(lambda t : c*t**3 + b*t**2+V*t+I)
 
+def solver(I,V,dt):
+    n = 100
+    u = zeros()
+    f_first = -w**2*I + DtDt(u,dt).subs(t,0)
+    u[1] = 0.5*(2*dt*V + dt**2*f_first - dt**2*w**2*I + 2*I)
+    u[0] = u[1]-2*dt*I
+    for i in range(2,n-1):
+        u[n+1] = dt**2*f - w**2*dt**2*u[n] + 2*u[n-1]
+
+
+
+
+
+
+
+
+    
+if __name__ == '__main__':
+    print "linear"
+    linear()
+    print "quadratic"
+    quadratic()
+    print "poly"
+    poly()
