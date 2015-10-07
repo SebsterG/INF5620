@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import sys
-def solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V):
+import math as math
+def solver(I,dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   
   
   Nt = int(round(T/float(dt)))
@@ -39,7 +40,16 @@ def solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   #xv = x.reshape((x.size,1))
   #yv = y.reshape((1,y.size))
   #Init wave
-  u_2[1:-1,1:-1] = u_exact(xv,yv,0) # inner points
+  #u_2[1:-1,1:-1] = u_exact(xv,yv,0) # inner points
+  #u_2[1:-1,1:-1] = I(xv[:],yv[:]) # inner points
+  Ix = range(1, u.shape[0]-1)
+  Iy = range(1, u.shape[1]-1)
+  It = range(0, t.shape[0])
+
+  # Fetching the initial condition
+  for j in Iy:
+    for i in Ix:
+      u_2[i,j]=I(x[i-1],y[j-1])
   
   u_2[-1,1:-1] = u_2[-3,1:-1]   # update ghost points
   u_2[1:-1,0] = u_2[1:-1,2]
@@ -137,6 +147,7 @@ def solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
     plt.savefig('frame_%04d.png'%int(n))
     #plt.show()"""
+
     fig = plt.figure()
     plt.ioff()
     ax = Axes3D(fig)
@@ -151,15 +162,65 @@ def solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     #update time steps
     #u_2[:,:] = u_1[:,:] ; u_1[:,:] = u[:,:]
     u_2, u_1, u = u_1, u, u_2  #faster 
-    error = abs(u_exact(xv,yv,t[n])- u[1:-1,1:-1])
-    error_list[n] = np.amax(error)
+    #error = abs(u_exact(xv,yv,t[n])- u[1:-1,1:-1])
+    #error_list[n] = np.amax(error)
     
-  error_mean = np.amax(error_list)
+  #error_mean = np.amax(error_list)
     
     
-  return error_mean 
+  return #error_mean 
+
+def constant_solution():
+  dt=0.01
+  Lx = 1
+  Ly = 1
+  Nx = 50
+  Ny = 50
+  T=2
+  mx = 2
+  my = 2
+  kx = mx*np.pi/Lx
+  ky = my*np.pi/Ly
+  w = np.sqrt(9.81*kx)
+  A=1
+  V= 0
+  beta = 0.9
+  b = 0
+  qc = 1
+  f = 0
+  u_exact = lambda x, y, t: 2 
+  error=solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V)
 
 
+
+
+
+
+
+def plug_wave(direction):
+  dt = 0.001
+  b = 1
+  qc = 1
+  Lx = 1
+  Ly = 1
+  T = 1
+  qc = 1
+  u_exact = 0
+  beta = 0.9
+  f = 0
+  V  = 0
+  if direction == "x":
+    Nx = 100
+    Ny = 100
+
+    I = lambda x,y: 0 if abs(x-Lx/2.0) > 0.025 else 1 
+  else:
+    Nx = 100
+    Ny = 100
+
+    I = lambda x,y: 0 if abs(y-Ly/2.0) > 0.025 else 1
+
+  solver(I,dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V)
 
 def standing_wave():
   
@@ -181,33 +242,9 @@ def standing_wave():
   qc = 1
   f = 0
   u_exact = lambda x, y, t: A*np.cos(mx*np.pi*x/Lx)*np.cos(my*np.pi*y/Ly)*np.cos(w*t)  
-  print solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V)
-  
-  """
-  Fx = 10	
-  Fy = 10
-  error = []
-  h_list = [0.1,0.01,0.001,0.0005]
-  for h in h_list:
-	  dt = h
-	  Nx = int(round(Lx/(Fx*h)))
-	  Ny = int(round(Ly/(Fy*h)))
-
-	  error.append(solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V))
-  print "The error is:" 
-  print error
-
-  r = [np.log(error[i-1]/error[i])/ \
-	  np.log(h_list[i-1]/h_list[i]) \
-		  for i in range(1, len(h_list), 1)]
-  print "... with a convergence rate of:" 
-  print r
-  """
-    
-  
-  
-  
+  I = lambda x,y: A*np.cos(mx*np.pi*x/Lx)*np.cos(my*np.pi*y/Ly)
+  print solver(I,dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V)  
 
 
 if __name__ == "__main__":
-  standing_wave()
+  plug_wave('x')

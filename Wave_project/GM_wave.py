@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import math as math
 
 
 
@@ -153,7 +154,7 @@ def pulse(direction):
 		Ny = 100
 		def I(x,y):
 			sigma = 0.025
-			if abs(x-0.5*Lx) > sigma :
+			if math.fabs(x-0.5*Lx) > sigma :
 				out = 0
 			else:
 				out = 1
@@ -164,7 +165,7 @@ def pulse(direction):
 		Ny = 100
 		def I(x,y):
 			sigma = 0.025
-			if abs(y-0.5*Ly) > sigma :
+			if math.fabs(y-0.5*Ly) > sigma :
 				out = 0
 			else:
 				out = 1
