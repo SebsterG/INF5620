@@ -5,10 +5,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import sympy as sym
 import sys
-def f_sympy(u):
+def f_sympy(u,qval):
 
   x,y,t,q,b,kx,ky,A,B,w = sym.symbols('x, y, t, q, b, kx, ky, A, B, w')
   u = u
+  q = qval
   u_tt = sym.diff(u,t,t)
   u_t = sym.diff(u,t)
   u_x = sym.diff(u,x)
@@ -20,14 +21,9 @@ def f_sympy(u):
   f =u_tt + b*u_t -q_x*u_x - q*u_xx - q_y*u_y - q*u_yy 
 
   return sym.simplify(f)
-  #return sym.lambdify((x,y,t,q,b,kx,ky,A,B,w),f)
-x,y,t,q,b,kx,ky,A,B,w = sym.symbols('x ,y, t, q, b, kx, ky, A, B, w')
 
-u = (A*sym.cos(w*t)+B*sym.sin(w*t))*sym.exp(-sym.sqrt(q)*t)*sym.cos(kx*x)*sym.cos(ky*y)
-print f_sympy(u)
 
 def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
-  
   
   Nt = int(round(T/float(dt)))
   Nx = Lx/dx
@@ -36,8 +32,10 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   u = np.zeros((Nx+3,Ny+3))
   u_1 = np.zeros((Nx+3,Ny+3))
   u_2 = np.zeros((Nx+3,Ny+3))
+  f = np.zeros((Nx+1,Ny+1))
   error_list = np.zeros(Nt+1)
-  q = np.zeros((Nx+3,Ny+3))+qc  # mesh for q
+
+  q = np.zeros((Nx+3,Ny+3))+qc[x]  # mesh for q
 
   
   x = np.linspace(0,Lx,Nx+1)
@@ -104,7 +102,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     C_x*0.25*( (q[2:,1:-1]+q[1:-1,1:-1])*(u_2[2:,1:-1]-u_2[1:-1,1:-1]) -\
       (q[1:-1,1:-1]+q[:-2,1:-1])*(u_2[1:-1,1:-1]- u_2[:-2,1:-1])  )\
 	+ C_y*0.25*( (q[1:-1,2:] + q[1:-1,1:-1])*(u_2[1:-1,2:]-u_2[1:-1,1:-1]) - \
-	    (q[1:-1,1:-1]+q[1:-1,:-2])*(u_2[1:-1,1:-1]-u_2[1:-1,:-2])   )
+	    (q[1:-1,1:-1]+q[1:-1,:-2])*(u_2[1:-1,1:-1]-u_2[1:-1,:-2])   ) +0.5*f(x[:],y[:],t[0])
   
   
 
@@ -133,7 +131,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
 	    (0.5*C_x/(K+1))*((q[2:,1:-1]+q[1:-1,1:-1])*(u_1[2:,1:-1]-u_1[1:-1,1:-1]) - \
 		    (q[1:-1,1:-1]+q[0:-2,1:-1])*(u_1[1:-1,1:-1]-u_1[0:-2,1:-1])) + \
 			    (0.5*C_y/(K+1)) * ((q[1:-1:,2:]+q[1:-1,1:-1])*(u_1[1:-1,2:]-u_1[1:-1,1:-1]) - \
-				    (q[1:-1:,1:-1]+q[1:-1,0:-2])*(u_1[1:-1,1:-1]-u_1[1:-1,0:-2])) 
+				    (q[1:-1:,1:-1]+q[1:-1,0:-2])*(u_1[1:-1,1:-1]-u_1[1:-1,0:-2])) + f(x[:],y[:],t[n])
 					    
 	
     
@@ -169,6 +167,42 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     
     
   return error_max 
+
+
+
+def manufactured():
+
+  def make_f(b_val,kx_val,ky_val,A_val,B_val,w_val):
+      x,y,t,q,b,kx,ky,A,B,w = sym.symbols('x ,y, t, q, b, kx, ky, A, B, w')
+      q = 1 + x
+      u = (A*sym.cos(w*t)+B*sym.sin(w*t))*sym.exp(-sym.sqrt(q)*t)*sym.cos(kx*x)*sym.cos(ky*y)
+      f = f_sympy(u,q)
+      f = f.subs([(b,b_val),(kx,kx_val),(ky,ky_val),(A,A_val),(B,B_val),(w,w_val)])
+      print f
+      return sym.lambdify((x,y,t),f)
+
+  dx =0.05
+  dy =0.05
+  q = 1
+  b = 0
+  Lx = 1
+  Ly = 1
+  A = 1
+  B = 1
+  beta = 0.9
+  mx = 1.0
+  my = 1.0
+  kx = mx*np.pi/Lx
+  ky = my*np.pi/Ly
+  qc = lambda x,y : 1+x
+  w = np.sqrt(qc(1,1)*(kx**2+ky**2))
+  f = make_f(b,kx,ky,A,B,w)
+  print f(1,1,1)
+  dt = np.sqrt(1/qc(1,1))*1/np.sqrt((1/(dx))**2+(1/(dy))**2)
+
+  u_exact = np.vectorize(lambda x, y, t: (A*np.cos(w*t)+B*np.sin(w*t))*np.exp(-np.sqrt(q)*t)*np.cos(kx*x)*np.cos(ky*y))  
+  I = np.vectorize(lambda x,y: A**np.exp(-np.sqrt(q)*t)*np.cos(kx*x)*np.cos(ky*y))
+
 
 def constant_solution():
   dt=0.01
@@ -266,7 +300,7 @@ def standing_wave():
   """  
 
 
-"""
 if __name__ == "__main__":
   #plug_wave(raw_input("x,y, or middle"))
-  standing_wave()"""
+  #standing_wave()
+  manufactured()
