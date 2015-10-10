@@ -1,0 +1,64 @@
+\documentclass[a4paper,norsk]{article}
+\usepackage{preamble}
+
+\begin{document}
+
+\title{INF5620 \\ Project 1}
+\author{Sebastian Gjertsen}
+
+\maketitle
+\section*{}
+In this project we use the linear, two-dimensional wave equation:
+$$\frac{\partial^2 u}{\partial t^2} + b \frac{\partial u}{\partial t} = \frac{\partial }{\partial x}(q(x,y)u(x,y,t)) + \frac{\partial }{\partial y}(q(x,y)u(x,y,t))  $$
+Our general scheme for internal points is:
+
+
+
+$$u_{i,j}^{n+1} = \frac{\frac{dt*b}{2}-1}{\frac{dt*b}{2}+1}u_{i,j}^{n-1} + \frac{2}{1+K}u_{i,j}^n + $$
+$$0.5(\frac{\frac{dt^2}{dx^2}}{\frac{dt*b}{2}+1}(q_{i+1,j}+q_{i,j})(u_{i+1,j}^n-u_i^n) - (q_{i,j}+q_{i-1,j})(u_{i,j}^n - u_{i+1,j}^n)) + $$ 
+$$0.5(\frac{\frac{dt^2}{dy^2}}{\frac{dt*b}{2}+1}(q_{i,j+1}+q_{j})(u_{i,(j+1)}^n-u_{i,j}^n) - (q_{i,j}+q_{i,j-1})(u_{i,j}^n - u_{i,j+1}^n)) +f_{i,j}^n $$
+
+I have used ghost so i only need to update the ghost point at each edge with the line in from the edge.
+\section*{4}
+In this section I have modelled different ocean floors and look at how it effects the wave. I have used more or less the same wave for every run.
+The first one is a simulation of a beach, found in beach_1.gif. The red is the seafloor and the blue is the wave. We see that it acts the way we would expect a wave to hit a beach. It increases in amplitude as it hits the beach and gets pulled down a bit as it moves out.
+The next simulation was of a wide ridge in the middle of the domain, ridge_1.gif. We see that the wave gets pulled down a bit from ocean floor, as expected. Now we see in ridge_2.gif, that when we increase the height of the ridge and increase the amplitude we get some errors in the solution. Its not too bad, but it indicates at what capacity our solver starts making errors.
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
