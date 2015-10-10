@@ -69,7 +69,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
       u_2[i,j]=I(x[i-1],y[j-1])"""
   #I = np.vectorize(I(xv,yv))
 
-  q[1:-1,1:-1] = qc(x,y)
+  q[1:-1,1:-1] = qc(xv,yv)
   q[-1,1:-1] = q[-3,1:-1]   # update ghost points
   q[1:-1,0] = q[1:-1,2]
   q[1:-1,-1] = q[1:-1,-3]
@@ -88,16 +88,16 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   #error_list[0] = np.amax(error)
   #print "first error should be zero:...", error
 
-  fig = plt.figure()
-  plt.ioff()
-  X,Y = np.meshgrid(x,y)
-  ax = Axes3D(fig)
-  ax.plot_surface(X, Y, u_2[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
-  ax.plot_wireframe(X, Y, u_exact(x,y), rstride=1, cstride=1, cmap='hot',color='red')
-  ax.view_init(25,100)
-  ax.auto_scale_xyz([0, Lx], [0, Ly], [0, 3])
-  plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-  plt.savefig('waveplot_%04d.png' % (0))
+  """fig = plt.figure()
+        plt.ioff()
+        #X,Y = np.meshgrid(x,y)
+        ax = Axes3D(fig)
+        ax.plot_surface(xv, yv, u_2[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
+        ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[0]), rstride=1, cstride=1, cmap='hot',color='red')
+        ax.view_init(25,25)
+        ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
+        plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
+        plt.savefig('waveplot_%04d.png' % (0))"""
   #plt.show()
   
   
@@ -120,16 +120,16 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
 
   #error = abs(u_exact(x,y,t[1])- u_1[1:-1,1:-1])
   #error_list[1] = np.amax(error)
-  fig = plt.figure()
-  plt.ioff()
-  X,Y = np.meshgrid(x,y)
-  ax = Axes3D(fig)
-  ax.plot_wireframe(X, Y, u_1[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
-  ax.plot_wireframe(X, Y, u_exact(x,y), rstride=1, cstride=1, cmap='hot',color='red')
-  ax.view_init(25,100)
-  ax.auto_scale_xyz([0, Lx], [0, Ly], [0, 3])
-  plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-  plt.savefig('waveplot_%04d.png' % (0))
+  """fig = plt.figure()
+        plt.ioff()
+        #X,Y = np.meshgrid(x,y)
+        ax = Axes3D(fig)
+        ax.plot_wireframe(xv, yv, u_1[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
+        ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[1]), rstride=1, cstride=1, cmap='hot',color='red')
+        ax.view_init(25,25)
+        ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
+        plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
+        plt.savefig('waveplot_%04d.png' % (0))"""
   #plt.show()
 
 
@@ -156,21 +156,21 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     
     
     #plot and make figure
-    
+    """
     num_frames = 100
     skip_frame = int(Nt/float(num_frames))
     if n % skip_frame == 0 or n == Nt-1:
       fig = plt.figure()
       plt.ioff() 
       X,Y = np.meshgrid(x,y)
-      ax = fig.add_subplot(111, projection='3d') 
-      ax.plot_wireframe(X,Y,u[1:-1,1:-1],rstride=1, cstride=1, cmap='hot',color='blue') 
-      ax.plot_wireframe(X,Y,u_exact(x,y), rstride=1, cstride=1, cmap='hot',color='red')
-      ax.auto_scale_xyz([0, Lx], [0, Ly], [0, 3])
-      ax.view_init(25,100)
+      ax = Axes3D(fig) 
+      ax.plot_wireframe(xv,yv,u[1:-1,1:-1],rstride=1, cstride=1, cmap='hot',color='blue') 
+      ax.plot_wireframe(xv,yv,u_exact(xv,yv,t[n]), rstride=1, cstride=1, cmap='hot',color='red')
+      ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
+      ax.view_init(25,25)
       plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
       plt.savefig('waveplot_%04d.png' % (n))
-                #plt.show()
+                #plt.show()"""
       
     
     
@@ -178,12 +178,12 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     #update time steps
     u_2[:,:] = u_1[:,:] ; u_1[:,:] = u[:,:]
     #u_2, u_1, u = u_1, u, u_2  #faster 
-    """error = abs(u_exact(x[:],y[:],t[n])- u[1:-1,1:-1])
-                error_list[n] = np.amax(error)
-              error_max = np.max(error_list)
-                """
-    
-  return None
+    error = abs(u_exact(xv,yv,t[n])- u[1:-1,1:-1])
+    error_list[n] = np.amax(error)
+  error_max = np.max(error_list)
+      
+
+  return error_max
 
 
 
@@ -283,11 +283,11 @@ def standing_wave():
   
   Lx = 1.0
   Ly = 1.0
-  #dx = 0.05
-  #dy = 0.05
-  T=2
-  mx = 1
-  my = 1
+  #dx = 0.1
+  #dy = 0.1
+  T=1
+  mx = 2
+  my = 2
   kx = mx*np.pi/Lx
   ky = my*np.pi/Ly
   #w = np.sqrt(9.81*kx)
@@ -306,9 +306,11 @@ def standing_wave():
   #dt = h/10
   #print dx ,dy ,dt
   #dt = np.sqrt(1.0/qc(1,1))*1/np.sqrt((1.0/(dx))**2+(1.0/(dy))**2)
-  rounds = 8
-  h = 0.5
-  h_values = np.zeros(rounds+1)
+  #print dt , dx ,dy
+  #print solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V)
+  rounds = 7
+  h = 1.0
+  h_values = np.zeros(rounds)
   err = np.zeros(rounds+1)
   for i in range(rounds):
     dt = h/10.0
@@ -318,27 +320,24 @@ def standing_wave():
     dy = Ly/(Ny)
     h_values[i] = h
     err[i] = solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V)
-    print err[i]
-    #print "Error is  %.25f with dt: %f, dx:%.4f , dy:%.4f " %(solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V), dt,dx,dy)
+    #print err[i]
+    print "Error is  %.25f with dt: %f, dx:%.4f , dy:%.4f " %(err[i], dt,dx,dy)
     h = h/2.0
   r = [np.log(err[i-1]/err[i])/ \
     np.log(h_values[i-1]/h_values[i]) \
       for i in range(1, len(h_values), 1)]
-  print r
-  """
-  h = [0.1,0.01,0.001]
-  for i in h:
-    error = solver(I,dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V)  
-  """  
+  print "The convergence rate: .. ",r
+  
+  
 
 def Hill(choice):
 
 
   b = 0
-  Lx = 3.0
-  Ly = 3.0
-  dx = 0.04
-  dy = 0.04
+  Lx = 4.0
+  Ly = 4.0
+  dx = 1.0
+  dy = 1.0
   T = 4
   #qc = 1
   u_exact = 0
@@ -354,14 +353,14 @@ def Hill(choice):
   #dt = (Lx/Nx)/(np.sqrt(qc))
   if choice == "b":
 
-    I_0 = 1.5; I_a = 1.7 ; I_m = 0; I_s = 0.5
-    B_0 = 0.0; B_a = 1.5; B_mx = Lx/2.0 ; B_my = Ly/2.0 ; B_s = 1 ; b_scale = 0.5
+    I_0 = 1.0; I_a = 0.8 ; I_m = 0; I_s = 0.5
+    B_0 = 0.0; B_a = 0.6; B_mx = Lx/2.0 ; B_my = Ly/2.0 ; B_s = 0.5 ; b_scale = 1
     I = np.vectorize(lambda x,y: I_0 + I_a*np.exp(-((y-I_m)/I_s)**2))
     B = np.vectorize(lambda x,y: B_0 + B_a*np.exp(-((x-B_mx)/B_s)**2 - ((y-B_my)/(b_scale*B_s))**2))
   if choice == "h":
 
-    I_0 = 1.0; I_a = 1.0 ; I_m = Lx ; I_s = 0.5
-    B_0 = 1; B_a = 1.0; B_mx =Lx/2.  ; B_my = Lx/2. ; B_s = 0.5
+    I_0 = 1.3; I_a = 0.5 ; I_m = Lx ; I_s = 0.5
+    B_0 = 0; B_a = 1.1; B_mx =Lx/2.0  ; B_my = Lx/2.0 ; B_s = 0.3
     I = np.vectorize(lambda x,y: I_0 + I_a*np.exp(-((x-I_m)/I_s)**2))
     B = np.vectorize(lambda x,y: B_0 + B_a*np.cos(np.pi*(x-B_mx)/(2*B_s))*np.cos(np.pi*(y-B_my)/(2*B_s))\
                if 0 <= np.sqrt((x-Lx/2.0)**2+(y-Ly/2.0)**2) <= B_s else B_0 )
@@ -372,9 +371,9 @@ def Hill(choice):
   plt.ioff()
   X,Y = np.meshgrid(x,y)
   ax = Axes3D(fig)
-  ax.plot_wireframe(X, Y, I(x,y), rstride=1, cstride=1, cmap='hot',color='green')
-  ax.plot_wireframe(X, Y, B(x,y), rstride=1, cstride=1, cmap='hot',color='red')
-  ax.view_init(25,100)
+  ax.plot_wireframe(xv, yv, I(xv,yv), rstride=1, cstride=1, cmap='hot',color='blue')
+  ax.plot_wireframe(xv, yv, B(xv,yv), rstride=1, cstride=1, cmap='hot',color='red')
+  ax.view_init(25,25)
   ax.auto_scale_xyz([0, Lx], [0, Ly], [0, 2])
   plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
   #plt.savefig('waveplot_%04d.png' % (0))
@@ -387,6 +386,6 @@ def Hill(choice):
 
 if __name__ == "__main__":
   #plug_wave(raw_input("x,y, or middle"))
-  #standing_wave()
+  standing_wave()
   #manufactured()
-  Hill(raw_input("h for hat or b for beach........"))
+  #Hill(raw_input("h for hat or b for beach........"))
