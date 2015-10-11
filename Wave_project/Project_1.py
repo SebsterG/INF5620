@@ -31,7 +31,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   u = np.zeros((Nx+3,Ny+3))
   u_1 = np.zeros((Nx+3,Ny+3))
   u_2 = np.zeros((Nx+3,Ny+3))
-  #f = np.zeros((Nx+1,Ny+1))
+  f = np.zeros((Nx+1,Ny+1))
   error_list = np.zeros(Nt+1)
 
 
@@ -41,15 +41,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   t = np.linspace(0, T, Nt+1)
 
   q = np.zeros((Nx+3,Ny+3)) # mesh for q
-  #dx = float(x[1]-x[0])
-  #dy = float(y[1]-y[0])
-  #dx = Lx/Nx
-  #dy = Ly/Ny
-  #rint "dt is %.5f.. dx is %.5f .. dy is %.5f .." %(dt,dx,dy)
-  #if dt > beta * dx*np.sqrt(qc):
-    #sys.exit("dt is high af")
-  #if dt > np.sqrt(1/qc)*np.sqrt((1/dx)**2+(1/dy)**2):
-   # sys.exit("dt is high af")  
+  
       
   
   K = dt*b/2.0
@@ -88,16 +80,16 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   #error_list[0] = np.amax(error)
   #print "first error should be zero:...", error
 
-  """fig = plt.figure()
-        plt.ioff()
-        #X,Y = np.meshgrid(x,y)
-        ax = Axes3D(fig)
-        ax.plot_surface(xv, yv, u_2[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
-        ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[0]), rstride=1, cstride=1, cmap='hot',color='red')
-        ax.view_init(25,25)
-        ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
-        plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-        plt.savefig('waveplot_%04d.png' % (0))"""
+  fig = plt.figure()
+  plt.ioff()
+  #X,Y = np.meshgrid(x,y)
+  ax = Axes3D(fig)
+  ax.plot_surface(xv, yv, u_2[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
+  #ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[0]), rstride=1, cstride=1, cmap='hot',color='red')
+  ax.view_init(25,25)
+  ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
+  plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
+  plt.savefig('waveplot_%04d.png' % (0))
   #plt.show()
   
   
@@ -120,16 +112,16 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
 
   #error = abs(u_exact(x,y,t[1])- u_1[1:-1,1:-1])
   #error_list[1] = np.amax(error)
-  """fig = plt.figure()
-        plt.ioff()
-        #X,Y = np.meshgrid(x,y)
-        ax = Axes3D(fig)
-        ax.plot_wireframe(xv, yv, u_1[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
-        ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[1]), rstride=1, cstride=1, cmap='hot',color='red')
-        ax.view_init(25,25)
-        ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
-        plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-        plt.savefig('waveplot_%04d.png' % (0))"""
+  fig = plt.figure()
+  plt.ioff()
+  #X,Y = np.meshgrid(x,y)
+  ax = Axes3D(fig)
+  ax.plot_wireframe(xv, yv, u_1[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
+  #ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[1]), rstride=1, cstride=1, cmap='hot',color='red')
+  ax.view_init(25,25)
+  ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
+  plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
+  plt.savefig('waveplot_%04d.png' % (0))
   #plt.show()
 
 
@@ -156,7 +148,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     
     
     #plot and make figure
-    """
+    
     num_frames = 100
     skip_frame = int(Nt/float(num_frames))
     if n % skip_frame == 0 or n == Nt-1:
@@ -165,12 +157,12 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
       X,Y = np.meshgrid(x,y)
       ax = Axes3D(fig) 
       ax.plot_wireframe(xv,yv,u[1:-1,1:-1],rstride=1, cstride=1, cmap='hot',color='blue') 
-      ax.plot_wireframe(xv,yv,u_exact(xv,yv,t[n]), rstride=1, cstride=1, cmap='hot',color='red')
+      #ax.plot_wireframe(xv,yv,u_exact(xv,yv,t[n]), rstride=1, cstride=1, cmap='hot',color='red')
       ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
       ax.view_init(25,25)
       plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
       plt.savefig('waveplot_%04d.png' % (n))
-                #plt.show()"""
+                #plt.show()
       
     
     
@@ -228,26 +220,30 @@ def manufactured():
   print solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V)
 
 def constant_solution():
-  dt=0.01
-  Lx = 100
-  Ly = 1
-  Nx = 50
-  Ny = 50
-  T=2
-  mx = 2
-  my = 2
-  kx = mx*np.pi/Lx
-  ky = my*np.pi/Ly
-  w = np.sqrt(9.81*kx)
-  A=1
-  V= 0
-  beta = 0.9
-  b = 0
-  qc = 1
-  f = 0
-  u_exact = lambda x, y, t: 2 
-  error=solver(dt,Nx,Ny,Lx,Ly,T,beta,b,qc,f,u_exact,V)
+  Lx = 1.0
+  Ly = 1.0
 
+  T=2.0
+  V= 0.0
+  beta = 0.9
+  b = 0.0
+  qc = lambda x,y:  3
+  f = 0
+  u_exact = lambda x, y, t: 3
+  I = lambda x, y: 3
+  rounds = 8
+  h = 1.0
+  for i in range(rounds):
+    u_exact = lambda x, y, t: 2+i  # checking different constant solutions with different dx, dy and dt
+    I = lambda x, y: 2+i
+    dt = h/10.0
+    Nx = 1.0/h
+    Ny = 1.0/h
+    dx = Lx/(Nx)
+    dy = Ly/(Ny)
+
+    print "Error in constant solution: %.4f with dt = %.4f and dx = dy = %.4f" %(solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V),dt,dx)
+    h = h/2.0
 
 
 
@@ -255,26 +251,25 @@ def constant_solution():
 
 
 def plug_wave(direction):
-  b = 1
+  b = 0
   Lx = 3.0
   Ly = 3.0
   dx = 0.05
   dy = 0.05
-  T = 5
+  T = 4
   qc = lambda x,y: 2
-  u_exact = lambda x,y: 0
+  u_exact = lambda x,y,t: 0
   beta = 0.8
   f = 0
   V  = 0 
-  dt = np.sqrt(1.0/qc(1,1))*1/np.sqrt((1.0/dx)**2+(1.0/dy)**2)
-  I = 0
+  #dt = np.sqrt(1.0/qc(1,1))*1/np.sqrt((1.0/dx)**2+(1.0/dy)**2)
 
-  #dt = (Lx/Nx)/(np.sqrt(qc))
+  dt = dx/(np.sqrt(qc(1,1)))
   print "dt is:... ", dt, dx ,dy
   if direction == "x":
-    I = np.vectorize(lambda x,y: 0 if abs(x-0.5*Lx) > 0.1 else 2) 
+    I = np.vectorize(lambda x,y: 0 if abs(x-0.5*Lx) > 0.05 else 1) 
   if direction == "y":
-    I = np.vectorize(lambda x,y: 0 if abs(y-0.5*Ly) > 0.1 else 2)
+    I = np.vectorize(lambda x,y: 0 if abs(y-0.5*Ly) > 0.05 else 1)
   if direction == "middle":
     I = np.vectorize(lambda x,y: 0 if abs(x-0.5*Lx) > 0.05 or abs(y-0.5*Ly) > 0.05 else 2)
 
@@ -385,7 +380,8 @@ def Hill(choice):
 
 
 if __name__ == "__main__":
-  #plug_wave(raw_input("x,y, or middle"))
-  standing_wave()
+  plug_wave(raw_input("x,y, or middle"))
+  #standing_wave()
   #manufactured()
   #Hill(raw_input("h for hat or b for beach........"))
+  #constant_solution()
