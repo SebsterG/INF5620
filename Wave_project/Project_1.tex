@@ -70,9 +70,13 @@ Error in constant solution: 1.7339 with dt = 0.0031 and dx = dy = 0.0312
 Error in constant solution: 1.7316 with dt = 0.0016 and dx = dy = 0.0156
 Error in constant solution: 1.7305 with dt = 0.0008 and dx = dy = 0.0078
 \end{lstlisting}
+\subsection*{3.3}
+In the gifs plugX and plugY, we see the wave splitting and hitting the boundary and being mirrored back. When they hit eachother in the middle they again get mirrored. To get this type of wave i used  $dt = \frac{\Delta x}{\sqrt{q}}$, and $dt = \frac{\Delta y}{\sqrt{q}}$
+
+
 \subsection*{3.4}
 Here I have inserted the exact solution into the pde, to get $\omega = \sqrt{q*(k_x^2+k_y^2))}$.
-In the gif standing wave, I have plotted the numerical and exact solution on top of eachother, and as we can see there is no difference so this tells me that the solver is accurate.
+In the gif standing wave, I have plotted the numerical and exact solution on top of eachother, and as we can see there is no difference so this tells me that the solver is accurate. When i calculated the error and covergence rate i used the maximum error from each time step and then the maximum of all those.
 
 \noindent Terminal
 \begin{lstlisting}[language=bash]
@@ -89,7 +93,7 @@ The convergence rate: ..
 1.9617017963021701, 2.0009319584616945, 
 2.0012154209330246, 2.000237954508191]
 As we can see the convergence tends toward 2 which again assures 
-me that the solver is correct.
+me that the solver is correct. 
 
 \end{lstlisting}
 
@@ -98,13 +102,13 @@ me that the solver is correct.
 \section*{4}
 
 In this section I have modelled different ocean floors and look at how it effects the wave. I have used more or less the same wave for every run.
-The first one is a simulation of a beach, found in $beach_1.gif$  
-\includemovie{1cm}{1cm}{beach_1.gif}
+The first one is a simulation of a beach, found in beach\_1.gif  
+
 The red is the seafloor and the blue is the wave. We see that it acts the way we would expect a wave to hit a beach. It increases in amplitude as it hits the beach and gets pulled down a bit as it moves out.
-The next simulation was of a wide ridge in the middle of the domain,$ ridge_1.gif$. We see that the wave gets pulled down a bit from ocean floor, as expected. Now we see in $ridge_2.gif$, that when we increase the height of the ridge and increase the amplitude we get some errors in the solution. Its not too bad, but it indicates at what capacity our solver starts making errors.
-In the $peak_smooth.gif$ with a little dampning, the effects look natural and we get a pull from the geometry on the wave when it moves over.
-With the $peak_crash.gif$ we see a that if we choose a peak thats too high the solver crashes.
-In the $rough_mesh.gif$, and $super_rough_mesh.gif$ we see that the solver delivers a good solution even with a coarse mesh.
+The next simulation was of a wide ridge in the middle of the domain,ridge\_1.gif. We see that the wave gets pulled down a bit from ocean floor, as expected. Now we see in ridge\_2.gif, that when we increase the height of the ridge and increase the amplitude we get some errors in the solution. Its not too bad, but it indicates at what capacity our solver starts making errors.
+In the peak\_smooth.gif with a little dampning, the effects look natural and we get a pull from the geometry on the wave when it moves over.
+With the peak\_crash.gif we see a that if we choose a peak thats too high the solver crashes.
+In the rough\_mesh.gif, and super\_rough\_mesh.gif we see that the solver delivers a good solution even with a coarse mesh.
 
 
 

@@ -5,6 +5,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import sympy as sym
 import sys
+
+#----------------------------------------------------------------------------------
+#------- You can run the code in the main function at the bottom of the code ------
+#----------------------------------------------------------------------------------
+
 def f_sympy(u,qval,w):
 
   x,y,t,q,b,kx,ky,A,B,w = sym.symbols('x, y, t, q, b, kx, ky, A, B, w')
@@ -51,16 +56,7 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   xv = x[:,np.newaxis]
   yv = y[np.newaxis,:]
   
-  #I = np.vectorize(I)
-  """Ix = range(1, u.shape[0]-1)
-  Iy = range(1, u.shape[1]-1)
-  It = range(0, t.shape[0])    
-        # Fetching the initial condition
-  for j in Iy:
-    for i in Ix:
-      u_2[i,j]=I(x[i-1],y[j-1])"""
-  #I = np.vectorize(I(xv,yv))
-
+ 
   q[1:-1,1:-1] = qc(xv,yv)
   q[-1,1:-1] = q[-3,1:-1]   # update ghost points
   q[1:-1,0] = q[1:-1,2]
@@ -76,20 +72,18 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   u_2[1:-1,-1] = u_2[1:-1,-3]
   u_2[0,1:-1] = u_2[2,1:-1]
   
-  #plots 
-  #error_list[0] = np.amax(error)
-  #print "first error should be zero:...", error
-
+ 
+  """ 
   fig = plt.figure()
   plt.ioff()
   #X,Y = np.meshgrid(x,y)
   ax = Axes3D(fig)
   ax.plot_surface(xv, yv, u_2[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
-  #ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[0]), rstride=1, cstride=1, cmap='hot',color='red')
+  ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[0]), rstride=1, cstride=1, cmap='hot',color='red')
   ax.view_init(25,25)
   ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
   plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-  plt.savefig('waveplot_%04d.png' % (0))
+  plt.savefig('waveplot_%04d.png' % (0))"""
   #plt.show()
   
   
@@ -110,22 +104,22 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
   u_1[1:-1,-1] = u_1[1:-1,-3]
   u_1[0,1:-1] = u_1[2,1:-1]
 
-  #error = abs(u_exact(x,y,t[1])- u_1[1:-1,1:-1])
-  #error_list[1] = np.amax(error)
+  error = abs(u_exact(xv,yv,t[1])- u_1[1:-1,1:-1])
+  error_list[1] = np.amax(error)
+  """
   fig = plt.figure()
   plt.ioff()
   #X,Y = np.meshgrid(x,y)
   ax = Axes3D(fig)
   ax.plot_wireframe(xv, yv, u_1[1:-1,1:-1], rstride=1, cstride=1, cmap='hot',color='blue')
-  #ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[1]), rstride=1, cstride=1, cmap='hot',color='red')
+  ax.plot_wireframe(xv, yv, u_exact(xv,yv,t[1]), rstride=1, cstride=1, cmap='hot',color='red')
   ax.view_init(25,25)
   ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
   plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-  plt.savefig('waveplot_%04d.png' % (0))
+  plt.savefig('waveplot_%04d.png' % (0))"""
   #plt.show()
 
 
-  
   
   
   # all time steps
@@ -148,21 +142,21 @@ def solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V):
     
     
     #plot and make figure
-    
-    num_frames = 100
-    skip_frame = int(Nt/float(num_frames))
-    if n % skip_frame == 0 or n == Nt-1:
-      fig = plt.figure()
-      plt.ioff() 
-      X,Y = np.meshgrid(x,y)
-      ax = Axes3D(fig) 
-      ax.plot_wireframe(xv,yv,u[1:-1,1:-1],rstride=1, cstride=1, cmap='hot',color='blue') 
-      #ax.plot_wireframe(xv,yv,u_exact(xv,yv,t[n]), rstride=1, cstride=1, cmap='hot',color='red')
-      ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
-      ax.view_init(25,25)
-      plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
-      plt.savefig('waveplot_%04d.png' % (n))
-                #plt.show()
+    """
+                num_frames = 101.0
+                skip_frame = int(Nt/float(num_frames))
+                if n % skip_frame == 0 or n == Nt-1:
+                  fig = plt.figure()
+                  plt.ioff() 
+                  X,Y = np.meshgrid(x,y)
+                  ax = Axes3D(fig) 
+                  ax.plot_wireframe(xv,yv,u[1:-1,1:-1],rstride=1, cstride=1, cmap='hot',color='blue') 
+                  ax.plot_wireframe(xv,yv,u_exact(xv,yv,t[n]), rstride=1, cstride=1, cmap='hot',color='red')
+                  ax.auto_scale_xyz([0, Lx], [0, Ly], [-1, 1])
+                  ax.view_init(25,25)
+                  plt.title("dt is: %.3f, dx = dy = %.3f"%(dt,dx)) 
+                  plt.savefig('waveplot_%04d.png' % (n))"""
+                #plt.show()"""
       
     
     
@@ -210,7 +204,6 @@ def manufactured():
   #print f()
   dt = float(np.sqrt(1.0/qc(1,1))*1/np.sqrt((1.0/(dx))**2+(1.0/(dy))**2))
 
-  #from math import sqrt, cos, sin, exp
   f = make_f(b,kx,ky,A,B,w)
 
   u_exact = np.vectorize(lambda x, y, t: (A*np.cos(w*t)+B*np.sin(w*t))*np.exp(-np.sqrt(qc(x,y))*t)*np.cos(kx*x)*np.cos(ky*y))  
@@ -278,9 +271,9 @@ def standing_wave():
   
   Lx = 1.0
   Ly = 1.0
-  #dx = 0.1
-  #dy = 0.1
-  T=1
+  dx = 0.01
+  dy = 0.01
+  T=3
   mx = 2
   my = 2
   kx = mx*np.pi/Lx
@@ -296,13 +289,7 @@ def standing_wave():
 
   u_exact = np.vectorize(lambda x, y, t: A*np.cos(mx*np.pi*x/Lx)*np.cos(my*np.pi*y/Ly)*np.cos(w*t))  
   I = np.vectorize(lambda x,y: A*np.cos(mx*np.pi*x/Lx)*np.cos(my*np.pi*y/Ly))
-  #dx = Lx/(1/h)
-  #dy = Lx/(1/h)
-  #dt = h/10
-  #print dx ,dy ,dt
-  #dt = np.sqrt(1.0/qc(1,1))*1/np.sqrt((1.0/(dx))**2+(1.0/(dy))**2)
-  #print dt , dx ,dy
-  #print solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V)
+  
   rounds = 7
   h = 1.0
   h_values = np.zeros(rounds)
@@ -313,9 +300,9 @@ def standing_wave():
     Ny = 1.0/h
     dx = Lx/(Nx)
     dy = Ly/(Ny)
+    #dt = np.sqrt(1.0/qc(1,1))*1/np.sqrt((1.0/dx)**2+(1.0/dy)**2)   <--- this gives a much better error but not right convergence rate
     h_values[i] = h
     err[i] = solver(I,dt,dx,dy,Lx,Ly,T,beta,b,qc,f,u_exact,V)
-    #print err[i]
     print "Error is  %.25f with dt: %f, dx:%.4f , dy:%.4f " %(err[i], dt,dx,dy)
     h = h/2.0
   r = [np.log(err[i-1]/err[i])/ \
@@ -380,8 +367,12 @@ def Hill(choice):
 
 
 if __name__ == "__main__":
-  plug_wave(raw_input("x,y, or middle"))
-  #standing_wave()
-  #manufactured()
-  #Hill(raw_input("h for hat or b for beach........"))
+
+  # ---- If you want to test the code, just uncomment standing_wave() or constant_solution() to check the errors and convergence rate. ---
+  # the other functions are just plotting
   #constant_solution()
+  standing_wave()
+  #plug_wave(raw_input("x,y, or middle"))
+  #manufactured() <---- Tried but didnt
+  #Hill(raw_input("h for hat or b for beach........"))
+  
